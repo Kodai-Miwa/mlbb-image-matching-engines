@@ -1,0 +1,245 @@
+{
+  "schema_version": "1.0",
+  "case_id": "FE-HERO-V132-20260705-0001",
+  "status": "failure_regression_seed",
+  "engine_version_target": "v1.3.2 Safe Match Gate",
+  "created_at": "2026-07-04T18:52:21.925637+00:00",
+  "source_image": {
+    "filename": "F245AEFC-C7DF-4990-B858-2AD41F7FF6C5.jpeg",
+    "sha256": "d79684f2ad93dbafadbacb2b2573ca70fb2244e8e0faabfbc5000c38defa1532",
+    "note": "User-provided MLBB result screen; copied into assets/images for regression reproduction."
+  },
+  "purpose": "Prevent weak reference_result_icons matches from allowing Hero Dictionary fallback / semantic candidates to become incorrect Top candidates.",
+  "expected_heroes": {
+    "ally_top_to_bottom": [
+      {
+        "slot": 1,
+        "hero_id": "lesley",
+        "display": "Lesley / ラズリー"
+      },
+      {
+        "slot": 2,
+        "hero_id": "yin",
+        "display": "Yin / 寅"
+      },
+      {
+        "slot": 3,
+        "hero_id": "nana",
+        "display": "Nana / ナナ"
+      },
+      {
+        "slot": 4,
+        "hero_id": "akai",
+        "display": "Akai / ガイ"
+      },
+      {
+        "slot": 5,
+        "hero_id": "x_borg",
+        "display": "X.Borg / エックス"
+      }
+    ],
+    "enemy_top_to_bottom": [
+      {
+        "slot": 1,
+        "hero_id": "floryn",
+        "display": "Floryn / フローラ"
+      },
+      {
+        "slot": 2,
+        "hero_id": "beatrix",
+        "display": "Beatrix / ベアトリクス"
+      },
+      {
+        "slot": 3,
+        "hero_id": "sun",
+        "display": "Sun / 悟空"
+      },
+      {
+        "slot": 4,
+        "hero_id": "paquito",
+        "display": "Paquito / パキート"
+      },
+      {
+        "slot": 5,
+        "hero_id": "chang_e",
+        "display": "Chang’e / チェン"
+      }
+    ]
+  },
+  "observed_failed_output": {
+    "ally_top_to_bottom": [
+      {
+        "slot": 1,
+        "hero_id": "ixia",
+        "display": "Ixia / イクシア",
+        "correct": false
+      },
+      {
+        "slot": 2,
+        "hero_id": "valir",
+        "display": "Valir / ヴァリル",
+        "correct": false
+      },
+      {
+        "slot": 3,
+        "hero_id": "nana",
+        "display": "Nana / ナナ",
+        "correct": true
+      },
+      {
+        "slot": 4,
+        "hero_id": "akai",
+        "display": "Akai / ガイ",
+        "correct": true
+      },
+      {
+        "slot": 5,
+        "hero_id": "benedetta",
+        "display": "Benedetta / ベネデッタ",
+        "correct": false
+      }
+    ],
+    "enemy_top_to_bottom": [
+      {
+        "slot": 1,
+        "hero_id": "odette",
+        "display": "Odette / オデット",
+        "correct": false
+      },
+      {
+        "slot": 2,
+        "hero_id": "cici",
+        "display": "Cici / シーシー",
+        "correct": false
+      },
+      {
+        "slot": 3,
+        "hero_id": "sun",
+        "display": "Sun / サン",
+        "correct": true
+      },
+      {
+        "slot": 4,
+        "hero_id": "paquito",
+        "display": "Paquito / パキート",
+        "correct": true
+      },
+      {
+        "slot": 5,
+        "hero_id": "chang_e",
+        "display": "Chang’e / 嫦娥",
+        "correct": true
+      }
+    ],
+    "accuracy": "5/10"
+  },
+  "safe_match_gate_requirements": [
+    "If reference_result_icons match is weak, ambiguous, missing, or conflicts with dictionary fallback, do not promote fallback to top_candidate.",
+    "When a v1.3.2 failure danger pair is involved and reference_match.status is not strong, top_candidate must be null and both candidates must be near_candidates.",
+    "Hero Lock remains disallowed until user confirmation.",
+    "Internal scores remain hidden from user UI."
+  ],
+  "failure_danger_pairs_v132": [
+    [
+      "lesley",
+      "ixia"
+    ],
+    [
+      "yin",
+      "valir"
+    ],
+    [
+      "x_borg",
+      "benedetta"
+    ],
+    [
+      "floryn",
+      "odette"
+    ],
+    [
+      "beatrix",
+      "cici"
+    ]
+  ],
+  "expected_safe_gate_behavior": {
+    "weak_or_conflict_slots": [
+      {
+        "team": "ally",
+        "slot": 1,
+        "top_candidate": null,
+        "near_candidates_must_include": [
+          "lesley",
+          "ixia"
+        ],
+        "status": "確認待ち"
+      },
+      {
+        "team": "ally",
+        "slot": 2,
+        "top_candidate": null,
+        "near_candidates_must_include": [
+          "yin",
+          "valir"
+        ],
+        "status": "確認待ち"
+      },
+      {
+        "team": "ally",
+        "slot": 5,
+        "top_candidate": null,
+        "near_candidates_must_include": [
+          "x_borg",
+          "benedetta"
+        ],
+        "status": "確認待ち"
+      },
+      {
+        "team": "enemy",
+        "slot": 1,
+        "top_candidate": null,
+        "near_candidates_must_include": [
+          "floryn",
+          "odette"
+        ],
+        "status": "確認待ち"
+      },
+      {
+        "team": "enemy",
+        "slot": 2,
+        "top_candidate": null,
+        "near_candidates_must_include": [
+          "beatrix",
+          "cici"
+        ],
+        "status": "確認待ち"
+      }
+    ],
+    "pass_slots_when_reference_strong": [
+      {
+        "team": "ally",
+        "slot": 3,
+        "hero_id": "nana"
+      },
+      {
+        "team": "ally",
+        "slot": 4,
+        "hero_id": "akai"
+      },
+      {
+        "team": "enemy",
+        "slot": 3,
+        "hero_id": "sun"
+      },
+      {
+        "team": "enemy",
+        "slot": 4,
+        "hero_id": "paquito"
+      },
+      {
+        "team": "enemy",
+        "slot": 5,
+        "hero_id": "chang_e"
+      }
+    ]
+  }
+}
