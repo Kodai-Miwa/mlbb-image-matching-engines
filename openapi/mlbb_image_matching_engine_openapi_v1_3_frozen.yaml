@@ -1,0 +1,193 @@
+openapi: 3.1.0
+info:
+  title: MLBB External Image Matching Engine
+  version: v1.3-frozen-test-20260704
+  description: Result-screen native reference icon matching engine. Candidate output only.
+servers:
+  - url: https://mlbb-image-matching-engines.onrender.com
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      responses:
+        "200":
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /privacy:
+    get:
+      operationId: privacyPolicy
+      summary: Privacy policy page
+      responses:
+        "200":
+          description: Privacy policy HTML
+          content:
+            text/html:
+              schema:
+                type: string
+  /v1/mlbb/image-match/analyze:
+    post:
+      operationId: analyzeMLBBResultScreen
+      summary: Analyze MLBB result screen and return candidate hero IDs
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeRequest"
+      responses:
+        "200":
+          description: Candidate matching report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzeResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        engine:
+          type: string
+        version:
+          type: string
+        reference_icon_count:
+          type: integer
+        unique_hero_count:
+          type: integer
+        profile_id:
+          type: string
+      required: [status, engine, version, reference_icon_count, unique_hero_count, profile_id]
+    AnalyzeRequest:
+      type: object
+      properties:
+        image_base64:
+          type: string
+          description: Base64 encoded screenshot image. Data URL prefix is allowed.
+        screen_type:
+          type: string
+          enum: [result_screen]
+          default: result_screen
+        engine_version:
+          type: string
+          default: v1.3
+        slot_profile:
+          type: string
+          enum: [result_screen_partition_v1_3, auto]
+          default: result_screen_partition_v1_3
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 5
+        return_debug_samples:
+          type: boolean
+          default: false
+      required: [image_base64]
+    AnalyzeResponse:
+      type: object
+      properties:
+        engine:
+          type: string
+        version:
+          type: string
+        screen_type:
+          type: string
+        profile_id:
+          type: string
+        reference_icon_count:
+          type: integer
+        unique_hero_count:
+          type: integer
+        hero_lock_allowed:
+          type: boolean
+        rule:
+          type: string
+        slots:
+          type: array
+          items:
+            $ref: "#/components/schemas/SlotResponse"
+      required: [engine, version, screen_type, profile_id, reference_icon_count, unique_hero_count, hero_lock_allowed, rule, slots]
+    SlotResponse:
+      type: object
+      properties:
+        slot:
+          type: string
+        team:
+          type: string
+          enum: [ally, enemy]
+        row_index:
+          type: integer
+        crop:
+          $ref: "#/components/schemas/CropBox"
+        matched_candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/Candidate"
+        risk_flags:
+          type: array
+          items:
+            type: string
+        notes:
+          type: array
+          items:
+            type: string
+      required: [slot, team, row_index, crop, matched_candidates, risk_flags, notes]
+    CropBox:
+      type: object
+      properties:
+        source_box:
+          type: array
+          items:
+            type: integer
+        normalized_size:
+          type: array
+          items:
+            type: integer
+      required: [source_box, normalized_size]
+    Candidate:
+      type: object
+      properties:
+        hero_id:
+          type: string
+        reference_id:
+          type: string
+        rank:
+          type: integer
+        distance:
+          type: number
+        components:
+          type: object
+          additionalProperties:
+            type: number
+      required: [hero_id, reference_id, rank, distance, components]
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+      required: [detail]
