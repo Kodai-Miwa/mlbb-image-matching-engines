@@ -408,7 +408,6 @@ def risk_flags_from_features(normal: FeatureZero, wide: FeatureZero) -> List[str
 def health() -> Dict[str, str]:
     return {"status": "ok", "engine": ENGINE_NAME, "version": ENGINE_VERSION}
 
-
 @app.post("/v1/mlbb/image-match/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest, x_api_key: Optional[str] = Header(default=None, alias="X-API-Key")) -> AnalyzeResponse:
     _check_api_key(x_api_key)
