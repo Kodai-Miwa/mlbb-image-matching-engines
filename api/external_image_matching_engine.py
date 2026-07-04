@@ -95,7 +95,7 @@ def privacy_policy():
 
         <h2>Contact</h2>
         <p>
-          Privacy contact: YOUR_CONTACT_EMAIL_HERE
+          Privacy contact: koudai80413@gmail.com
         </p>
       </body>
     </html>
