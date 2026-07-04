@@ -55,10 +55,48 @@ app = FastAPI(
 def privacy_policy():
     return """
     <html>
-      <head><title>Privacy Policy</title></head>
+      <head>
+        <meta charset="utf-8">
+        <title>Privacy Policy - MLBB Image Matching Engine</title>
+      </head>
       <body>
         <h1>Privacy Policy</h1>
-        ...
+        <p>Last updated: 2026-07-04</p>
+
+        <h2>Overview</h2>
+        <p>
+          MLBB Image Matching Engine provides image analysis support for
+          Mobile Legends: Bang Bang result screens.
+        </p>
+
+        <h2>Data We Process</h2>
+        <p>
+          The service may process uploaded result screen images, cropped hero icon regions,
+          contour data, silhouette data, mass balance data, image quality data,
+          and request metadata required for API operation.
+        </p>
+
+        <h2>Purpose</h2>
+        <p>
+          Data is processed only for hero candidate support, image quality inspection,
+          contour extraction, and recognition stability.
+        </p>
+
+        <h2>Storage</h2>
+        <p>
+          Uploaded images are intended to be processed transiently during the request.
+          The service is designed not to permanently store uploaded gameplay images.
+        </p>
+
+        <h2>Data Sharing</h2>
+        <p>
+          We do not sell uploaded images, extracted feature data, or user data.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Privacy contact: YOUR_CONTACT_EMAIL_HERE
+        </p>
       </body>
     </html>
     """
