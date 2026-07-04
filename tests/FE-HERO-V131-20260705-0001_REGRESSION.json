@@ -1,0 +1,63 @@
+{
+  "test_id": "FE-HERO-V131-20260705-0001",
+  "status": "required_regression",
+  "expected": {
+    "ally": [
+      "lesley",
+      "yin",
+      "nana",
+      "akai",
+      "xborg"
+    ],
+    "enemy": [
+      "floryn",
+      "beatrix",
+      "sun",
+      "paquito",
+      "change"
+    ]
+  },
+  "previous_wrong_output": {
+    "ally": [
+      "guinevere",
+      "aulus",
+      "nana",
+      "akai",
+      "esmeralda"
+    ],
+    "enemy": [
+      "rafaela",
+      "cici",
+      "sun",
+      "paquito",
+      "change"
+    ]
+  },
+  "pass_condition": [
+    "Correct hero is rank1 when reference match is strong.",
+    "If not strong, output weak/ambiguous/unregistered rather than wrong semantic candidate.",
+    "Hero Lock remains false."
+  ],
+  "critical_wrong_blocks": [
+    [
+      "guinevere",
+      "lesley"
+    ],
+    [
+      "aulus",
+      "yin"
+    ],
+    [
+      "esmeralda",
+      "xborg"
+    ],
+    [
+      "rafaela",
+      "floryn"
+    ],
+    [
+      "cici",
+      "beatrix"
+    ]
+  ]
+}

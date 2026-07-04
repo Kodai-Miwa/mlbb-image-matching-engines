@@ -1,75 +1,86 @@
-# MLBB V1.3.1 Icon-Center Anchor Engine Patch
+# MLBB v1.3.2 Safe Match Gate Patch
 
-This package updates the external Python API from fixed-x row clipping to **icon-center anchored clipping**.
+Status: patch_candidate  
+Date: 2026-07-05  
+Patch ID: HR-RESULT-MATCH-GATE-V1.3.2-20260705
 
-## Core pipeline
+## Purpose
+
+v1.3.2 adds a **Safe Match Gate** between reference-result-icon matching and GPT candidate display.
+
+The goal is to reduce wrong confident hero candidates when:
+
+- reference coverage is weak
+- crop confidence is low
+- top candidates are too close
+- dictionary fallback tries to overrule image match
+- a danger-pair group is involved
+
+## Core change
+
+The API must return a `match_status` for every slot.
 
 ```text
-Result screen
-↓
-Player row partition
-↓
-Search hero icon zone inside each row
-↓
-Detect hero icon circle center
-↓
-Crop 80x80 around center
-↓
-Normalize to 125x125
-↓
-Mask flag/level region
-↓
-Compare against reference_result_icons
-↓
-Return Top-K hero_id candidates
+strong       -> show top candidate, still confirmation required
+ambiguous    -> show multiple candidates, confirmation required
+weak         -> output 未確認
+unregistered -> output 未確認
 ```
 
-## Important rule
+## Authority rule
 
-The API returns candidates only.
-
-```json
-"hero_lock_allowed": false
+```text
+External reference_result_icons match = primary evidence
+Hero Dictionary = secondary support only
+Weak image match must not be replaced by semantic dictionary guess
 ```
 
-GPT/NexusOS must still ask user confirmation before Hero/Role Lock.
+## Pipeline
+
+```text
+result screen
+↓
+player-row search scope
+↓
+icon-center anchored crop
+↓
+125x125 normalized icon
+↓
+flag/level mask
+↓
+reference_result_icons comparison
+↓
+Safe Match Gate
+↓
+match_status + top/near candidates
+↓
+GPT candidate UI
+↓
+user confirmation
+```
 
 ## Files
 
 ```text
-api/external_image_matching_engine.py
-api/requirements.txt
-Dockerfile
-openapi/mlbb_image_matching_engine_openapi_v1_3_1_icon_center_anchor.yaml
-profiles/HR-RESULT-SCREEN-PARTITION-V1.3.1.md
-reference_result_icons/
-reference_manifest.json
-docs/
+api/safe_match_gate.py
+api/external_image_matching_engine_v1_3_2_patch_notes.py
+openapi/mlbb_image_matching_engine_openapi_v1_3_2_safe_match_gate.yaml
+docs/11_CUSTOM_GPT_INSTRUCTIONS_V1_3_2_SAFE_MATCH_GATE_PATCH.md
+docs/20_IMAGE_MATCHING_ACCURACY_ENGINE_V1_3_2_SAFE_MATCH_GATE_PATCH.md
+tests/FE-HERO-V131-20260705-0001_REGRESSION.json
+profiles/HR-RESULT-MATCH-GATE-V1.3.2.md
+manifest.json
 ```
 
-## Deploy
+## Important
 
-Replace the GitHub repository contents with these files, commit, and redeploy on Render.
+This patch is designed to be integrated into the current v1.3.1 API.
 
-After deploy:
-
-```text
-/health
-/docs
-/privacy
-```
-
-`/health` should show:
+It does not remove candidate-only behavior.
 
 ```json
 {
-  "status": "ok",
-  "version": "v1.3.1-icon-center-anchor-20260705",
-  "profile_id": "HR-RESULT-SCREEN-PARTITION-V1.3.1"
+  "hero_lock_allowed": false,
+  "user_confirmation_required": true
 }
 ```
-
-## Note
-
-This patch contains a template `reference_manifest.json`.
-To use the currently frozen 55 official references, copy your official `reference_result_icons/` folders and manifest into this package before deploying.

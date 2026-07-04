@@ -1,0 +1,16 @@
+{
+  "package": "mlbb_v1_3_2_safe_match_gate_patch",
+  "status": "patch_candidate",
+  "date": "2026-07-05",
+  "patch_id": "HR-RESULT-MATCH-GATE-V1.3.2-20260705",
+  "purpose": "Add strong/ambiguous/weak/unregistered gate to prevent wrong confident semantic candidates.",
+  "files": [
+    "api/safe_match_gate.py",
+    "api/external_image_matching_engine_v1_3_2_patch_notes.py",
+    "openapi/mlbb_image_matching_engine_openapi_v1_3_2_safe_match_gate.yaml",
+    "docs/11_CUSTOM_GPT_INSTRUCTIONS_V1_3_2_SAFE_MATCH_GATE_PATCH.md",
+    "docs/20_IMAGE_MATCHING_ACCURACY_ENGINE_V1_3_2_SAFE_MATCH_GATE_PATCH.md",
+    "tests/FE-HERO-V131-20260705-0001_REGRESSION.json",
+    "profiles/HR-RESULT-MATCH-GATE-V1.3.2.md"
+  ]
+}
