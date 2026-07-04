@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pillow
+numpy
+pydantic
+httpx==0.28.1
