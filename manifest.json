@@ -1,0 +1,20 @@
+{
+  "package": "mlbb_external_image_matching_action_pack_20260704",
+  "version": "v1.2-action",
+  "created_at": "2026-07-04",
+  "files": [
+    "api/external_image_matching_engine.py",
+    "api/requirements.txt",
+    "openapi/mlbb_image_matching_engine_openapi_20260704.yaml",
+    "patches/11_CUSTOM_GPT_INSTRUCTIONS_ACTION_PATCH_20260704.md",
+    "Dockerfile",
+    "README.md",
+    "examples/request_example.json",
+    "examples/response_example.json"
+  ],
+  "policy": {
+    "hero_lock_allowed": false,
+    "candidate_only_until_user_confirmation": true,
+    "external_action_required_for_result_screen": true
+  }
+}

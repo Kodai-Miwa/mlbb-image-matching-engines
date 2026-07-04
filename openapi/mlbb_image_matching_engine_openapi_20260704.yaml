@@ -1,0 +1,107 @@
+openapi: 3.1.0
+info:
+  title: MLBB Image Matching Engine
+  version: 1.2.0
+  description: External Feature-Zero image matching report API for MLBB result screen
+    hero recognition. Returns evidence only; does not lock hero identity.
+servers:
+- url: https://YOUR_API_DOMAIN_HERE
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      responses:
+        '200':
+          description: API health
+          content:
+            application/json:
+              schema:
+                type: object
+  /v1/mlbb/image-match/analyze:
+    post:
+      operationId: analyzeMLBBResultScreen
+      summary: Analyze MLBB result screen and return Feature-Zero contour report.
+      description: Use this before any MLBB hero candidate output. The API returns
+        slot-level visual evidence only, not final hero identities.
+      security:
+      - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - image_base64
+              properties:
+                image_base64:
+                  type: string
+                  description: Base64 encoded screenshot image. Data URL prefix is
+                    allowed.
+                screen_type:
+                  type: string
+                  enum:
+                  - result_screen
+                  default: result_screen
+                engine_version:
+                  type: string
+                  default: v1.2
+                slot_profile:
+                  type: string
+                  enum:
+                  - default_720x1280_result
+                  - auto
+                  default: default_720x1280_result
+                return_debug_samples:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Feature-Zero image matching report.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  engine:
+                    type: string
+                  version:
+                    type: string
+                  screen_type:
+                    type: string
+                  hero_lock_allowed:
+                    type: boolean
+                  rule:
+                    type: string
+                  slots:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        slot:
+                          type: string
+                        icon_quality:
+                          type: object
+                        normal_crop:
+                          type: object
+                        wide_crop:
+                          type: object
+                        risk_flags:
+                          type: array
+                          items:
+                            type: string
+                        notes:
+                          type: array
+                          items:
+                            type: string
+        '400':
+          description: Invalid image input
+        '401':
+          description: Invalid or missing API key
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key

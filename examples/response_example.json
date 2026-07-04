@@ -1,0 +1,62 @@
+{
+  "engine": "mlbb_external_image_matching_engine",
+  "version": "v1.2-action-20260704",
+  "screen_type": "result_screen",
+  "hero_lock_allowed": false,
+  "rule": "candidate_only_until_user_confirmation",
+  "slots": [
+    {
+      "slot": "ally_1",
+      "icon_quality": {
+        "status": "pass",
+        "crop_alignment": "ok",
+        "ui_interference": "unknown",
+        "brightness": "ok",
+        "compression_noise": "low"
+      },
+      "normal_crop": {
+        "available": true,
+        "scale": 3.0,
+        "crop_box": [
+          35,
+          188,
+          121,
+          274
+        ],
+        "feature_zero": {
+          "mass_gravity": "top_heavy",
+          "silhouette_symmetry": "near_symmetric",
+          "contour_sharpness": "mixed",
+          "top_projection": "medium",
+          "bottom_projection": "low",
+          "side_projection": "medium"
+        }
+      },
+      "wide_crop": {
+        "available": true,
+        "scale": 2.5,
+        "crop_box": [
+          10,
+          163,
+          146,
+          299
+        ],
+        "feature_zero": {
+          "mass_gravity": "middle_heavy",
+          "silhouette_symmetry": "right_heavy",
+          "contour_sharpness": "smooth",
+          "top_projection": "strong",
+          "bottom_projection": "low",
+          "side_projection": "medium"
+        }
+      },
+      "risk_flags": [
+        "mass_balance_crop_disagreement",
+        "top_projection_audit_required"
+      ],
+      "notes": [
+        "Feature-Zero only: no hair/eye/mouth semantic labels are assigned by API."
+      ]
+    }
+  ]
+}
