@@ -408,57 +408,6 @@ def risk_flags_from_features(normal: FeatureZero, wide: FeatureZero) -> List[str
 def health() -> Dict[str, str]:
     return {"status": "ok", "engine": ENGINE_NAME, "version": ENGINE_VERSION}
 
-@app.get("/privacy")
-def privacy_policy():
-    return {
-        "title": "Privacy Policy - MLBB Image Matching Engine",
-        "last_updated": "2026-07-04",
-        "overview": (
-            "MLBB Image Matching Engine provides image analysis support for "
-            "Mobile Legends: Bang Bang result screens. The service extracts "
-            "visual feature data from uploaded result screen images and returns "
-            "structured analysis data to the connected GPT for hero candidate generation."
-        ),
-        "data_we_process": [
-            "Uploaded MLBB result screen images",
-            "Cropped hero icon regions",
-            "Feature-Zero contour data",
-            "Row and column contour data",
-            "Silhouette symmetry data",
-            "Mass balance data",
-            "Image quality information",
-            "Request metadata required for API operation"
-        ],
-        "purpose": [
-            "MLBB hero icon candidate support",
-            "Image quality inspection",
-            "Feature-Zero contour extraction",
-            "Danger-pair audit support",
-            "Recognition stability during the active user request"
-        ],
-        "image_storage": (
-            "Uploaded images are intended to be processed transiently during the request. "
-            "The service is designed not to permanently store uploaded gameplay images."
-        ),
-        "logs": (
-            "Hosting providers may keep limited technical logs such as request time, "
-            "status code, endpoint, IP address, and error logs for security, debugging, "
-            "and service operation."
-        ),
-        "data_sharing": (
-            "We do not sell uploaded images, extracted feature data, or user data. "
-            "Data may be processed by infrastructure providers used to host and operate the API."
-        ),
-        "security": (
-            "The API uses an API key to restrict access from authorized GPT Actions. "
-            "Users should avoid uploading screenshots that contain sensitive personal information."
-        ),
-        "user_control": (
-            "Users can choose not to upload images and may crop or mask personal information "
-            "before uploading screenshots."
-        ),
-        "contact": "YOUR_CONTACT_EMAIL_HERE"
-    }
 
 @app.post("/v1/mlbb/image-match/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest, x_api_key: Optional[str] = Header(default=None, alias="X-API-Key")) -> AnalyzeResponse:
