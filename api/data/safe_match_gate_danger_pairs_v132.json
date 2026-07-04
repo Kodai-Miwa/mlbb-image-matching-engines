@@ -1,0 +1,30 @@
+{
+  "version": "v1.3.2",
+  "failure_danger_pairs": [
+    [
+      "lesley",
+      "ixia"
+    ],
+    [
+      "yin",
+      "valir"
+    ],
+    [
+      "x_borg",
+      "benedetta"
+    ],
+    [
+      "floryn",
+      "odette"
+    ],
+    [
+      "beatrix",
+      "cici"
+    ]
+  ],
+  "policy": {
+    "top_promotion": "blocked unless reference_match.status == strong",
+    "dictionary_fallback": "near_candidates_only_when_reference_weak_or_conflict",
+    "hero_lock_allowed": false
+  }
+}

@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: MLBB Image Matching Engine V1.3.2 Safe Match Gate
+  title: MLBB External Image Matching Engine
   version: v1.3.2-safe-match-gate-20260705
-  description: Candidate-only MLBB result-screen image matching API with Safe Match Gate.
+  description: Result-screen native reference icon matching engine with v1.3.2 Safe Match Gate. Candidate output only.
 servers:
   - url: https://mlbb-image-matching-engines.onrender.com
 paths:
@@ -16,19 +16,22 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status: { type: string }
-                  engine: { type: string }
-                  version: { type: string }
-                  profile_id: { type: string }
-                  reference_icon_count: { type: integer }
-                  unique_hero_count: { type: integer }
-                required: [status, engine, version, profile_id, reference_icon_count, unique_hero_count]
+                $ref: "#/components/schemas/HealthResponse"
+  /privacy:
+    get:
+      operationId: privacyPolicy
+      summary: Privacy policy page
+      responses:
+        "200":
+          description: Privacy policy HTML
+          content:
+            text/html:
+              schema:
+                type: string
   /v1/mlbb/image-match/analyze:
     post:
       operationId: analyzeMLBBResultScreen
-      summary: Analyze MLBB result screen
+      summary: Analyze MLBB result screen and return candidate hero IDs
       security:
         - ApiKeyAuth: []
       requestBody:
@@ -36,65 +39,166 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                image_base64:
-                  type: string
-                screen_type:
-                  type: string
-                  enum: [result_screen]
-                  default: result_screen
-                top_k:
-                  type: integer
-                  minimum: 1
-                  maximum: 10
-                  default: 5
-                return_debug_samples:
-                  type: boolean
-                  default: false
-              required: [image_base64]
+              $ref: "#/components/schemas/AnalyzeRequest"
       responses:
         "200":
-          description: Candidate-only matching report
+          description: Candidate matching report
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  engine: { type: string }
-                  version: { type: string }
-                  profile_id: { type: string }
-                  hero_lock_allowed: { type: boolean }
-                  reference_icon_count: { type: integer }
-                  unique_hero_count: { type: integer }
-                  slots:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        slot: { type: string }
-                        side: { type: string }
-                        row_index: { type: integer }
-                        match_status:
-                          type: string
-                          enum: [strong, ambiguous, weak, unregistered]
-                        top_candidate_allowed: { type: boolean }
-                        safe_gate_flags:
-                          type: array
-                          items: { type: string }
-                        matched_candidates:
-                          type: array
-                          items:
-                            type: object
-                        hero_lock_allowed: { type: boolean }
-                required: [engine, version, profile_id, hero_lock_allowed, reference_icon_count, unique_hero_count, slots]
+                $ref: "#/components/schemas/AnalyzeResponse"
         "400":
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "401":
-          description: Invalid or missing API key
+          description: Invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       in: header
       name: X-API-Key
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        engine:
+          type: string
+        version:
+          type: string
+        reference_icon_count:
+          type: integer
+        unique_hero_count:
+          type: integer
+        profile_id:
+          type: string
+      required: [status, engine, version, reference_icon_count, unique_hero_count, profile_id]
+    AnalyzeRequest:
+      type: object
+      properties:
+        image_base64:
+          type: string
+          description: Base64 encoded screenshot image. Data URL prefix is allowed.
+        screen_type:
+          type: string
+          enum: [result_screen]
+          default: result_screen
+        engine_version:
+          type: string
+          default: v1.3.2
+        slot_profile:
+          type: string
+          enum: [result_screen_partition_v1_3, auto]
+          default: result_screen_partition_v1_3
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 5
+        return_debug_samples:
+          type: boolean
+          default: false
+      required: [image_base64]
+    AnalyzeResponse:
+      type: object
+      properties:
+        engine:
+          type: string
+        version:
+          type: string
+        screen_type:
+          type: string
+        profile_id:
+          type: string
+        reference_icon_count:
+          type: integer
+        unique_hero_count:
+          type: integer
+        hero_lock_allowed:
+          type: boolean
+        rule:
+          type: string
+        slots:
+          type: array
+          items:
+            $ref: "#/components/schemas/SlotResponse"
+      required: [engine, version, screen_type, profile_id, reference_icon_count, unique_hero_count, hero_lock_allowed, rule, slots]
+    SlotResponse:
+      type: object
+      properties:
+        slot:
+          type: string
+        team:
+          type: string
+          enum: [ally, enemy]
+        row_index:
+          type: integer
+        crop:
+          $ref: "#/components/schemas/CropBox"
+        matched_candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/Candidate"
+        safe_gate_status:
+          type: string
+          enum:
+            - PASS_REFERENCE_STRONG
+            - PASS_REFERENCE_STRONG_WITH_FAILURE_PAIR_AUDIT
+            - BLOCK_WEAK_REFERENCE_TOP_PROMOTION
+        top_promotion_allowed:
+          type: boolean
+        confirmation_status:
+          type: string
+          example: 確認待ち
+        risk_flags:
+          type: array
+          items:
+            type: string
+        notes:
+          type: array
+          items:
+            type: string
+      required: [slot, team, row_index, crop, matched_candidates, safe_gate_status, top_promotion_allowed, confirmation_status, risk_flags, notes]
+    CropBox:
+      type: object
+      properties:
+        source_box:
+          type: array
+          items:
+            type: integer
+        normalized_size:
+          type: array
+          items:
+            type: integer
+      required: [source_box, normalized_size]
+    Candidate:
+      type: object
+      properties:
+        hero_id:
+          type: string
+        reference_id:
+          type: string
+        rank:
+          type: integer
+        distance:
+          type: number
+        components:
+          type: object
+          additionalProperties:
+            type: number
+      required: [hero_id, reference_id, rank, distance, components]
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+      required: [detail]

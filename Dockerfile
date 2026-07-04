@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 WORKDIR /app
-COPY api/requirements.txt /app/api/requirements.txt
-RUN pip install --no-cache-dir -r /app/api/requirements.txt
+COPY api/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 COPY api /app/api
 COPY reference_result_icons /app/reference_result_icons
 COPY reference_manifest.json /app/reference_manifest.json
