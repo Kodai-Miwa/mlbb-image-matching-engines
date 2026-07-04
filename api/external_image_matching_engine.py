@@ -372,85 +372,58 @@ def risk_flags_from_features(normal: FeatureZero, wide: FeatureZero) -> List[str
 @app.get("/health")
 def health() -> Dict[str, str]:
     return {"status": "ok", "engine": ENGINE_NAME, "version": ENGINE_VERSION}
-    
-@app.get("/privacy", response_class=HTMLResponse)
+
+@app.get("/privacy")
 def privacy_policy():
-    return """
-    <!doctype html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Privacy Policy - MLBB Image Matching Engine</title>
-      </head>
-      <body>
-        <h1>Privacy Policy</h1>
-        <p>Last updated: 2026-07-04</p>
-
-        <h2>Overview</h2>
-        <p>
-          MLBB Image Matching Engine provides image analysis support for
-          Mobile Legends: Bang Bang result screens. The service extracts visual
-          feature data from uploaded result screen images and returns structured
-          analysis data to the connected GPT for hero candidate generation.
-        </p>
-
-        <h2>Data We Process</h2>
-        <p>
-          When a user sends a MLBB result screen image to the GPT, the image may
-          be sent to this API for processing. The API may process uploaded
-          screenshots, cropped hero icon regions, contour data, silhouette data,
-          mass balance data, image quality data, and request metadata required
-          for API operation.
-        </p>
-
-        <h2>Purpose of Processing</h2>
-        <p>
-          Data is processed only for MLBB hero icon candidate support, image
-          quality inspection, contour extraction, and recognition stability.
-          The API does not make final hero identity decisions by itself.
-        </p>
-
-        <h2>Image Storage</h2>
-        <p>
-          Uploaded images are intended to be processed transiently during the
-          request. The service is designed not to permanently store uploaded
-          gameplay images.
-        </p>
-
-        <h2>Logs</h2>
-        <p>
-          Hosting providers may keep limited technical logs such as request
-          time, status code, endpoint, IP address, and error logs for security,
-          debugging, and service operation.
-        </p>
-
-        <h2>Data Sharing</h2>
-        <p>
-          We do not sell uploaded images, extracted feature data, or user data.
-          Data may be processed by infrastructure providers used to host and
-          operate the API.
-        </p>
-
-        <h2>Security</h2>
-        <p>
-          The API uses an API key to restrict access from authorized GPT Actions.
-          Users should avoid uploading screenshots that contain sensitive
-          personal information.
-        </p>
-
-        <h2>User Control</h2>
-        <p>
-          Users can choose not to upload images and may crop or mask personal
-          information before uploading screenshots.
-        </p>
-
-        <h2>Contact</h2>
-        <p>
-          Privacy contact: YOUR_CONTACT_EMAIL_HERE
-        </p>
-      </body>
-    </html>
-    """
+    return {
+        "title": "Privacy Policy - MLBB Image Matching Engine",
+        "last_updated": "2026-07-04",
+        "overview": (
+            "MLBB Image Matching Engine provides image analysis support for "
+            "Mobile Legends: Bang Bang result screens. The service extracts "
+            "visual feature data from uploaded result screen images and returns "
+            "structured analysis data to the connected GPT for hero candidate generation."
+        ),
+        "data_we_process": [
+            "Uploaded MLBB result screen images",
+            "Cropped hero icon regions",
+            "Feature-Zero contour data",
+            "Row and column contour data",
+            "Silhouette symmetry data",
+            "Mass balance data",
+            "Image quality information",
+            "Request metadata required for API operation"
+        ],
+        "purpose": [
+            "MLBB hero icon candidate support",
+            "Image quality inspection",
+            "Feature-Zero contour extraction",
+            "Danger-pair audit support",
+            "Recognition stability during the active user request"
+        ],
+        "image_storage": (
+            "Uploaded images are intended to be processed transiently during the request. "
+            "The service is designed not to permanently store uploaded gameplay images."
+        ),
+        "logs": (
+            "Hosting providers may keep limited technical logs such as request time, "
+            "status code, endpoint, IP address, and error logs for security, debugging, "
+            "and service operation."
+        ),
+        "data_sharing": (
+            "We do not sell uploaded images, extracted feature data, or user data. "
+            "Data may be processed by infrastructure providers used to host and operate the API."
+        ),
+        "security": (
+            "The API uses an API key to restrict access from authorized GPT Actions. "
+            "Users should avoid uploading screenshots that contain sensitive personal information."
+        ),
+        "user_control": (
+            "Users can choose not to upload images and may crop or mask personal information "
+            "before uploading screenshots."
+        ),
+        "contact": "YOUR_CONTACT_EMAIL_HERE"
+    }
 
 @app.post("/v1/mlbb/image-match/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest, x_api_key: Optional[str] = Header(default=None, alias="X-API-Key")) -> AnalyzeResponse:
