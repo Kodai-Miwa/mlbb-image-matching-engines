@@ -1,0 +1,34 @@
+{
+  "package": "mlbb_external_image_matching_action_pack_v1_3_2_dragdrop_update",
+  "version": "v1.3.2-safe-match-gate-failure-addon",
+  "created_at": "2026-07-05",
+  "purpose": "Folder-aligned drag-and-drop update for existing GitHub Render API package.",
+  "base_layout": [
+    "api",
+    "openapi",
+    "patches",
+    "examples",
+    "Dockerfile",
+    "README.md",
+    "manifest.json",
+    "requirements.txt"
+  ],
+  "files": [
+    "api/__init__.py",
+    "api/data/safe_match_gate_danger_pairs_v132.json",
+    "api/safe_match_gate_failure_pair_patch.py",
+    "assets/images/F245AEFC-C7DF-4990-B858-2AD41F7FF6C5.jpeg",
+    "examples/failure_cases/FE-HERO-V132-20260705-0001.json",
+    "patches/CHANGELOG_v1_3_2_failure_addon.md",
+    "patches/INTEGRATION_GUIDE_RENDER_API_v1_3_2.md",
+    "patches/README_v1_3_2_safe_match_gate_failure_addon.md",
+    "tests/test_safe_match_gate_failure_pair_patch.py"
+  ],
+  "policy": {
+    "hero_lock_allowed": false,
+    "candidate_only_until_user_confirmation": true,
+    "weak_reference_blocks_top_promotion": true,
+    "dictionary_fallback_near_candidates_only_when_reference_weak": true
+  },
+  "failure_seed": "FE-HERO-V132-20260705-0001"
+}
