@@ -1,0 +1,257 @@
+openapi: 3.1.0
+info:
+  title: MLBB Image Matching Engine V1.3.2 Safe Match Gate
+  version: v1.3.2-safe-match-gate-20260705
+  description: Candidate-only MLBB result-screen image matching API with Safe Match
+    Gate.
+servers:
+- url: https://mlbb-image-matching-engines.onrender.com
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /v1/mlbb/image-match/analyze:
+    post:
+      operationId: analyzeMLBBResultScreen
+      summary: Analyze MLBB result screen
+      security:
+      - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeRequest'
+      responses:
+        '200':
+          description: Candidate-only matching report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyzeResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Invalid or missing API key
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        engine:
+          type: string
+        version:
+          type: string
+        profile_id:
+          type: string
+        reference_icon_count:
+          type: integer
+        unique_hero_count:
+          type: integer
+      required:
+      - status
+      - engine
+      - version
+      - profile_id
+      - reference_icon_count
+      - unique_hero_count
+      additionalProperties: false
+    AnalyzeRequest:
+      type: object
+      properties:
+        image_base64:
+          type: string
+          description: Base64 encoded MLBB result screen image. Data URL prefix is
+            allowed.
+        screen_type:
+          type: string
+          enum:
+          - result_screen
+          default: result_screen
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 5
+        return_debug_samples:
+          type: boolean
+          default: false
+      required:
+      - image_base64
+      additionalProperties: false
+    MatchCandidate:
+      type: object
+      properties:
+        hero_id:
+          type: string
+        display_name:
+          type:
+          - string
+          - 'null'
+        reference_id:
+          type: string
+        rank:
+          type: integer
+        score:
+          type: number
+        distance:
+          type: number
+        source:
+          type: string
+      required:
+      - hero_id
+      - reference_id
+      - rank
+      - score
+      - distance
+      - source
+      additionalProperties: true
+    CropDebug:
+      type: object
+      properties:
+        side:
+          type: string
+          enum:
+          - ally
+          - enemy
+        row_index:
+          type: integer
+        crop_method:
+          type: string
+        confidence:
+          type: string
+          enum:
+          - high
+          - medium
+          - low
+        anchor_center:
+          type: array
+          items:
+            type: integer
+        source_crop_box:
+          type: array
+          items:
+            type: integer
+        normalized_size:
+          type: array
+          items:
+            type: integer
+        mask_regions:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: integer
+        detection_notes:
+          type: array
+          items:
+            type: string
+      required:
+      - side
+      - row_index
+      - crop_method
+      - confidence
+      - anchor_center
+      - source_crop_box
+      - normalized_size
+      additionalProperties: true
+    SlotReport:
+      type: object
+      properties:
+        slot:
+          type: string
+        side:
+          type: string
+          enum:
+          - ally
+          - enemy
+        row_index:
+          type: integer
+        match_status:
+          type: string
+          enum:
+          - strong
+          - ambiguous
+          - weak
+          - unregistered
+        top_candidate_allowed:
+          type: boolean
+        safe_gate_flags:
+          type: array
+          items:
+            type: string
+        hero_lock_allowed:
+          type: boolean
+        crop_debug:
+          $ref: '#/components/schemas/CropDebug'
+        matched_candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchCandidate'
+        risk_flags:
+          type: array
+          items:
+            type: string
+        notes:
+          type: array
+          items:
+            type: string
+      required:
+      - slot
+      - side
+      - row_index
+      - match_status
+      - top_candidate_allowed
+      - safe_gate_flags
+      - hero_lock_allowed
+      - matched_candidates
+      additionalProperties: true
+    AnalyzeResponse:
+      type: object
+      properties:
+        engine:
+          type: string
+        version:
+          type: string
+        profile_id:
+          type: string
+        screen_type:
+          type: string
+        hero_lock_allowed:
+          type: boolean
+        rule:
+          type: string
+        reference_icon_count:
+          type: integer
+        unique_hero_count:
+          type: integer
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/SlotReport'
+      required:
+      - engine
+      - version
+      - profile_id
+      - screen_type
+      - hero_lock_allowed
+      - rule
+      - reference_icon_count
+      - unique_hero_count
+      - slots
+      additionalProperties: true
