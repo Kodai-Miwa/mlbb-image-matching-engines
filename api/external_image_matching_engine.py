@@ -49,6 +49,7 @@ app = FastAPI(
         "Feature-Zero image matching report generator for MLBB result screens. "
         "This API returns contour and quality evidence only; it does not perform Hero Lock."
     ),
+)
 
 @app.get("/privacy", response_class=HTMLResponse)
 def privacy_policy():
@@ -61,10 +62,6 @@ def privacy_policy():
       </body>
     </html>
     """
-
-
-
-)
 
 
 class AnalyzeRequest(BaseModel):
